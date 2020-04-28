@@ -1,58 +1,60 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import faker from 'faker';
-import UserDetail from './userDetail';
-import UserCard from './userCard';
+import SeasonDisplay from './seasonDisplay';
+import Spinner from './spinner';
 
-const App = () => {
-  return (
-    <div className="container">
-      <UserDetail
-        nama="Roy"
-        tanggalGabung="7 Apr 2010"
-        alamat="Jl. Abc"
-        avatar={faker.image.avatar()} />
-      <UserDetail
-        nama="Aron"
-        tanggalGabung="17 jan 2009"
-        alamat="Jl. Kucing"
-        avatar={faker.image.avatar()} />
+class App extends React.Component {
+  state = { lt: null, lg: null, errorMessage: '' };
 
+  // constructor(props) {
+  //   super(props);
+  //   this.state = { lt: null, lg: null, errorMessage: '' };
+  //   window.navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       this.setState({ lt: position.coords.latitude, lg: position.coords.longitude });
+  //     },
+  //     (err) => {
+  //       this.setState({ errorMessage: err.message });
+  //     });
+  // }
 
-      <UserCard>
-        <UserDetail
-          nama="Roy"
-          tanggalGabung="7 Apr 2010"
-          alamat="Jl. Abc"
-          avatar={faker.image.avatar()} />
-      </UserCard>
-      <UserCard>
-        <UserDetail
-          nama="Aron"
-          tanggalGabung="17 jan 2009"
-          alamat="Jl. Kucing"
-          avatar={faker.image.avatar()} />
-      </UserCard>
-    </div>
+  componentDidMount() {
+    window.navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({ lt: position.coords.latitude, lg: position.coords.longitude });
+      },
+      (err) => {
+        this.setState({ errorMessage: err.message });
+      });
+  }
 
+  render() {
+    if (this.state.errorMessage) {
+      return (
+        <div>
+          <div> Error : {this.state.errorMessage}</div>
+        </div>
+      );
+    }
+    if (!this.state.errorMessage && this.state.lt) {
+      return (
+        <div>
+          <div className='text-title'>Posisi Anda :</div>
+          <div className='text-info'> Latitude : {this.state.lt}</div>
+          <div className='text-info space-bottom'> Longitude : {this.state.lg}</div>
+          <SeasonDisplay />
+          <Spinner/> 
+        </div>
+      );
+    }
+    return <div>Loading !!!</div>
 
-    // <div className="container">
-    //   <UserDetail/>
-    // </div>
-
-    // <div className="container">
-    //   <div className="card border-dark mb-3" style={{ maxWidth: '25rem' }}>
-    //     <div className="card-body text-dark">
-    //       <img src={faker.image.avatar()} alt="avatar" className="rounded ﬂoat-left mr-2" />
-    //       <h5 className="card-title">Roy</h5>
-    //       <p className="card-text">Jl. Merbabu 10</p>
-    //       <p className="card-text">
-    //         <small className="text-muted">Bergabung : 7 Apr 2010</small>
-    //       </p>
-    //     </div>
-    //   </div>
-    // </div>
-  );
+    // return (
+    //   <div> Posisi Anda :
+    //     <div> Latitude : {this.state.lt}</div>
+    //     <div> Longitude : {this.state.lg}</div>
+    //     <div> Error : {this.state.errorMessage}</div>
+    //   </div>);
+  }
 };
-
 ReactDOM.render(<App />, document.querySelector('#root'));

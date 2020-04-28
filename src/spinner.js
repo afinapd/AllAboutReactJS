@@ -1,0 +1,13 @@
+import React from 'react';
+
+const Spinner = (props) => {
+    return (
+        <div>
+            <div className="d-ﬂex justify-content-center">
+                <div className="spinner-border" role="status"></div>
+                <strong>{props.message}</strong>
+            </div>
+        </div>);
+};
+Spinner.defaultProps = { message: 'Loading...' };
+export default Spinner;
