@@ -1,42 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Link, Route } from 'react-router-dom';
-import Header from './component/header';
-import Admin from './component/admin';
+import SearchBar from './searchBar';
+import ImageList from './imageList';
 
-const PageOne = () => {
-  return (
-    <div>Page 1
-      <Link to="/pageTwo">Ke Halaman 2</Link>
-    </div>)
-};
-const PageTwo = () => {
-  return (
-    <div>Page 2
-      <Link to="/pageThree/3">Ke Halaman 3</Link>
-    </div>)
-};
-const PageThree = (props) => {
-  return (
-    <div>Page {props.match.params.num}
-      <Link to="/">Ke Halaman Awal</Link>
-    </div>
-  )
-};
 
 class App extends React.Component {
+
+  state = { images: [] }
+
+  onSearchSubmit = (term) => {
+    fetch(`https://jsonplaceholder.typicode.com/photos?id=${term}`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then((data) => {
+        this.setState({ images: data })
+      })
+  }
+
+  // onSearchSubmit = async (term) => {
+  //   const response = await fetch(`https://jsonplaceholder.typicode.com/photos?id=${term}`, {
+  //     method: 'GET'
+  //   })
+  //   const data = await response.json();
+  //   this.setState({ images: data })
+  // }
+
   render() {
     return (
-      <div>
-        <BrowserRouter>
-        <Header />
-          <div>
-            <Route path="/" exact component={PageOne} />
-            <Route path="/pageTwo" component={PageTwo} />
-            <Route path="/pageThree/:num" component={PageThree}/> 
-            <Route path="/admin" component={Admin} />
-          </div>
-        </BrowserRouter>
+      <div className="container mt-3">
+        <SearchBar onSubmit={this.onSearchSubmit} />
+        Found:{this.state.images.length} images
+        <ImageList images = {this.state.images} />
       </div>)
   }
 }
